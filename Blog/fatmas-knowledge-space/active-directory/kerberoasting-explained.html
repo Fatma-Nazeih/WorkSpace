@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kerberoasting Explained — Fatma's Knowledge Space</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <a class="brand" href="../index.html" style="text-decoration:none;"><span class="prompt">fatma@sec</span>:~$ ./knowledge-space<span class="cursor"></span></a>
+  <div class="topbar-right">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="search notes...">
+      <div id="search-results"></div>
+    </div>
+    <a class="home-link" href="../index.html">~/home</a>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-heading">Explorer</p>
+    <div id="explorer"></div>
+  </aside>
+
+  <main>
+    <p class="breadcrumb"><a href="../index.html">home</a><span class="sep">/</span><a href="index.html">active-directory</a><span class="sep">/</span><span class="current">Kerberoasting Explained</span></p>
+    <p class="eyebrow">active directory</p>
+    <h1>Kerberoasting Explained</h1>
+    <p class="lede">Why any authenticated domain user can request a crackable hash for any
+    service account — and how to actually pull it off.</p>
+
+    <span class="tag">kerberos</span><span class="tag">active directory</span><span class="tag">credential access</span>
+
+    <h2>The core idea</h2>
+    <p>Any account with a Service Principal Name (SPN) set — typically service accounts
+    running SQL Server, IIS app pools, scheduled tasks, etc. — can be asked for a Kerberos
+    service ticket by <em>any</em> authenticated domain user, no matter how low-privileged.
+    That ticket is encrypted with the service account's own password hash. Take the ticket
+    offline and crack it, and you've recovered the service account's password without ever
+    touching the DC's authentication logs beyond a normal ticket request.</p>
+
+    <h2>Why it works</h2>
+    <p>Kerberos issues a Ticket Granting Service (TGS) ticket for the requested SPN,
+    encrypted using the <strong>target service account's</strong> NTLM hash — not the
+    requester's. If that hash derives from a weak password, it's crackable offline, at
+    whatever speed the attacker's hardware allows.</p>
+
+    <h2>Execution</h2>
+    <pre><code># enumerate SPNs and request tickets in one pass
+impacket-GetUserSPNs htb.local/lowpriv:'password' -dc-ip 10.10.10.5 -request
+
+# crack offline
+hashcat -m 13100 spns.hash rockyou.txt</code></pre>
+
+    <h2>Why service accounts are the weak point</h2>
+    <ul>
+      <li>Passwords are often set once at provisioning and never rotated.</li>
+      <li>They're rarely subject to the same complexity/length policy enforcement as
+      interactive user accounts in practice.</li>
+      <li>Privilege is often broad — service accounts backing SQL Server or IIS frequently
+      carry local admin rights on multiple hosts.</li>
+    </ul>
+
+    <h2>Defensive notes</h2>
+    <p>Long, randomly generated service account passwords (25+ characters) make offline
+    cracking impractical. Group Managed Service Accounts (gMSAs) remove the problem
+    entirely — Windows rotates their password automatically and it's never
+    human-memorable, so there's nothing crackable to recover.</p>
+
+  </main>
+</div>
+
+<footer>Fatma's Knowledge Space © 2026</footer>
+
+<script src="../site-data.js"></script>
+<script>
+  renderExplorer("../", "active-directory/kerberoasting-explained.html");
+  renderSearch("../");
+</script>
+</body>
+</html>

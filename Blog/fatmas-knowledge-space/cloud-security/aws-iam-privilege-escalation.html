@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS IAM Privilege Escalation Paths — Fatma's Knowledge Space</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <a class="brand" href="../index.html" style="text-decoration:none;"><span class="prompt">fatma@sec</span>:~$ ./knowledge-space<span class="cursor"></span></a>
+  <div class="topbar-right">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="search notes...">
+      <div id="search-results"></div>
+    </div>
+    <a class="home-link" href="../index.html">~/home</a>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-heading">Explorer</p>
+    <div id="explorer"></div>
+  </aside>
+
+  <main>
+    <p class="breadcrumb"><a href="../index.html">home</a><span class="sep">/</span><a href="index.html">cloud-security</a><span class="sep">/</span><span class="current">AWS IAM Privilege Escalation Paths</span></p>
+    <p class="eyebrow">cloud security</p>
+    <h1>AWS IAM Privilege Escalation Paths</h1>
+    <p class="lede">A working list of IAM permission combinations that let a low-privileged
+    identity escalate to admin — useful once initial access to any AWS credential is gained.</p>
+
+    <span class="tag">aws</span><span class="tag">iam</span><span class="tag">privesc</span>
+
+    <h2>Why this matters</h2>
+    <p>Most cloud engagements don't start with root credentials — they start with one leaked
+    key or an over-permissioned Lambda role. The interesting part is what that identity can
+    reach <em>from there</em>. IAM privesc is rarely one obvious hole; it's usually a chain of
+    permissions that look harmless individually.</p>
+
+    <h2>High-value permission combos</h2>
+    <table>
+      <tr><th>Permission(s)</th><th>Path to escalation</th></tr>
+      <tr><td><code>iam:CreatePolicyVersion</code></td><td>Attach a new admin policy version to a role/user you control</td></tr>
+      <tr><td><code>iam:AttachUserPolicy</code></td><td>Attach <code>AdministratorAccess</code> directly to yourself</td></tr>
+      <tr><td><code>iam:PassRole</code> + <code>lambda:CreateFunction</code></td><td>Create a Lambda with an over-privileged execution role, invoke it</td></tr>
+      <tr><td><code>iam:PassRole</code> + <code>ec2:RunInstances</code></td><td>Launch an EC2 instance with an admin instance profile, pull creds from metadata</td></tr>
+      <tr><td><code>iam:CreateAccessKey</code></td><td>Mint new keys for a higher-privileged user</td></tr>
+      <tr><td><code>iam:UpdateAssumeRolePolicy</code></td><td>Modify a role's trust policy to allow your principal to assume it</td></tr>
+    </table>
+
+    <h2>Enumeration first</h2>
+    <p>Before chasing exploitation, map what the current identity can actually do:</p>
+    <pre><code>aws sts get-caller-identity
+aws iam list-attached-user-policies --user-name &lt;user&gt;
+aws iam simulate-principal-policy --policy-source-arn &lt;arn&gt; --action-names iam:PassRole</code></pre>
+    <p>Tools like <code>Pacu</code> and <code>PMapper</code> automate a lot of this graph-building —
+    worth running early rather than eyeballing individual policies.</p>
+
+    <h2>Notes</h2>
+    <ul>
+      <li>CloudTrail logs every one of these actions — treat privesc testing on live
+      environments as loud by default.</li>
+      <li>Wildcard resources (<code>"Resource": "*"</code>) on <code>iam:*</code> actions are the
+      single most common root cause when reviewing policies.</li>
+    </ul>
+
+  </main>
+</div>
+
+<footer>Fatma's Knowledge Space © 2026</footer>
+
+<script src="../site-data.js"></script>
+<script>
+  renderExplorer("../", "cloud-security/aws-iam-privilege-escalation.html");
+  renderSearch("../");
+</script>
+</body>
+</html>

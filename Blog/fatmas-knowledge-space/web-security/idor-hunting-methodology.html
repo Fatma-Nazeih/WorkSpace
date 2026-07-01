@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IDOR Hunting Methodology — Fatma's Knowledge Space</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <a class="brand" href="../index.html" style="text-decoration:none;"><span class="prompt">fatma@sec</span>:~$ ./knowledge-space<span class="cursor"></span></a>
+  <div class="topbar-right">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="search notes...">
+      <div id="search-results"></div>
+    </div>
+    <a class="home-link" href="../index.html">~/home</a>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-heading">Explorer</p>
+    <div id="explorer"></div>
+  </aside>
+
+  <main>
+    <p class="breadcrumb"><a href="../index.html">home</a><span class="sep">/</span><a href="index.html">web-security</a><span class="sep">/</span><span class="current">IDOR Hunting Methodology</span></p>
+    <p class="eyebrow">web security</p>
+    <h1>IDOR Hunting Methodology</h1>
+    <p class="lede">A repeatable process for finding Insecure Direct Object Reference bugs
+    instead of stumbling into them by accident.</p>
+
+    <span class="tag">idor</span><span class="tag">authz</span><span class="tag">methodology</span>
+
+    <h2>1. Map every object reference</h2>
+    <p>Walk the app as two separate low-privileged users and log every place an ID, slug,
+    UUID, or filename shows up — in the URL, in JSON bodies, in headers, even in filenames
+    for uploads/downloads. Anything that identifies "which record" is a candidate.</p>
+
+    <h2>2. Swap and observe</h2>
+    <p>For each candidate, replace User A's ID with User B's while authenticated as A. Check
+    for three outcomes, not just one:</p>
+    <ul>
+      <li><strong>Full disclosure</strong> — the other user's data comes back unchanged.</li>
+      <li><strong>Partial disclosure</strong> — a 200 with a trimmed-down or different-shaped
+      response (still a finding, easy to miss with only a status-code diff).</li>
+      <li><strong>Blind write</strong> — a 200/204 on a POST/PUT/DELETE with no reflected data
+      at all; confirm impact by re-fetching as the victim.</li>
+    </ul>
+
+    <h2>3. Don't stop at numeric IDs</h2>
+    <p>UUIDs and hashes get treated as "unguessable" and skipped — but if they leak anywhere
+    else in the app (another endpoint, an email, a PDF export, a support ticket), the
+    "randomness" stops mattering. Also check GraphQL node IDs and batched/array parameters,
+    which frequently skip the authz check applied to their singular counterparts.</p>
+
+    <h2>4. Check every HTTP verb per endpoint</h2>
+    <p>Authz checks are often bolted onto <code>GET</code> and forgotten on
+    <code>PUT</code>/<code>PATCH</code>/<code>DELETE</code> for the same resource. Re-test the
+    full verb set for any endpoint that returns object data.</p>
+
+    <h2>Quick Burp workflow</h2>
+    <pre><code># Autorize / Auth Analyzer extension:
+1. Log requests as low-priv user A
+2. Replay each with cookie/token swapped to user B (and vice versa)
+3. Diff response length + status code, then manually confirm anything "unauthorized"</code></pre>
+
+  </main>
+</div>
+
+<footer>Fatma's Knowledge Space © 2026</footer>
+
+<script src="../site-data.js"></script>
+<script>
+  renderExplorer("../", "web-security/idor-hunting-methodology.html");
+  renderSearch("../");
+</script>
+</body>
+</html>

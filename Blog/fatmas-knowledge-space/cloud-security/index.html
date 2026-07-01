@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cloud security — Fatma's Knowledge Space</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <a class="brand" href="../index.html" style="text-decoration:none;"><span class="prompt">fatma@sec</span>:~$ ./knowledge-space<span class="cursor"></span></a>
+  <div class="topbar-right">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="search notes...">
+      <div id="search-results"></div>
+    </div>
+    <a class="home-link" href="../index.html">~/home</a>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-heading">Explorer</p>
+    <div id="explorer"></div>
+  </aside>
+
+  <main>
+    <p class="breadcrumb"><a href="../index.html">home</a><span class="sep">/</span><span class="current">cloud-security</span></p>
+    <p class="eyebrow">cd cloud-security/</p>
+    <h1>cloud security</h1>
+    <p class="lede">Misconfigurations, IAM abuse, and attack paths across AWS, Azure and GCP — the stuff that shows up in almost every cloud engagement.</p>
+
+    <h2>Notes</h2>
+    <ul class="note-list">
+      <li><a href="aws-iam-privilege-escalation.html">AWS IAM Privilege Escalation Paths</a><span class="note-meta">cloud security · updated May 2026</span></li>
+    </ul>
+
+  </main>
+</div>
+
+<footer>Fatma's Knowledge Space © 2026</footer>
+
+<script src="../site-data.js"></script>
+<script>
+  renderExplorer("../", "cloud-security/index.html");
+  renderSearch("../");
+</script>
+</body>
+</html>

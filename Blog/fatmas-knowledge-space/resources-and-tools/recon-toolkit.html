@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recon Toolkit — Fatma's Knowledge Space</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <a class="brand" href="../index.html" style="text-decoration:none;"><span class="prompt">fatma@sec</span>:~$ ./knowledge-space<span class="cursor"></span></a>
+  <div class="topbar-right">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="search notes...">
+      <div id="search-results"></div>
+    </div>
+    <a class="home-link" href="../index.html">~/home</a>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-heading">Explorer</p>
+    <div id="explorer"></div>
+  </aside>
+
+  <main>
+    <p class="breadcrumb"><a href="../index.html">home</a><span class="sep">/</span><a href="index.html">resources-and-tools</a><span class="sep">/</span><span class="current">Recon Toolkit</span></p>
+    <p class="eyebrow">resources and tools</p>
+    <h1>Recon Toolkit</h1>
+    <p class="lede">The tools that actually make it into my recon phase, roughly in the
+    order I reach for them.</p>
+
+    <span class="tag">recon</span><span class="tag">tooling</span>
+
+    <h2>Subdomain enumeration</h2>
+    <ul>
+      <li><code>subfinder</code> — fast passive enumeration across many sources, good default first pass.</li>
+      <li><code>amass</code> — slower, more thorough; worth the extra time on a wide scope.</li>
+      <li><code>httpx</code> — probe the resulting list for live hosts, status codes, and titles in one pass.</li>
+    </ul>
+
+    <h2>Content discovery</h2>
+    <ul>
+      <li><code>ffuf</code> — directory/parameter fuzzing, fast enough to iterate wordlists quickly.</li>
+      <li><code>gau</code> / <code>waybackurls</code> — pull historical URLs, catches endpoints that
+      no longer link from anywhere but still resolve.</li>
+      <li><code>SecLists</code> — the wordlist source for basically everything above.</li>
+    </ul>
+
+    <h2>Manual testing</h2>
+    <ul>
+      <li><code>Burp Suite</code> — Autorize, Turbo Intruder, and Logger++ are the extensions
+      that stay installed on every engagement.</li>
+      <li><code>Caido</code> — lighter alternative when Burp's overhead isn't needed.</li>
+    </ul>
+
+    <h2>Active Directory</h2>
+    <ul>
+      <li><code>BloodHound</code> — attack path graphing, essential on any internal AD engagement.</li>
+      <li><code>Impacket</code> suite — <code>secretsdump</code>, <code>GetNPUsers</code>,
+      <code>psexec</code> cover most of the post-foothold workflow.</li>
+      <li><code>NetExec</code> (formerly CrackMapExec) — spraying, enumeration, and execution
+      across a subnet from one tool.</li>
+    </ul>
+
+    <h2>Notes-to-self</h2>
+    <p>Keep tool output in per-engagement folders named by date + scope, not by tool — makes
+    it far easier to reconstruct a timeline later when writing the report.</p>
+
+  </main>
+</div>
+
+<footer>Fatma's Knowledge Space © 2026</footer>
+
+<script src="../site-data.js"></script>
+<script>
+  renderExplorer("../", "resources-and-tools/recon-toolkit.html");
+  renderSearch("../");
+</script>
+</body>
+</html>

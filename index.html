@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fatma's Knowledge Space</title>
+<meta name="description" content="Fatma's Knowledge Space — notes, write-ups and tooling from the offensive security trenches.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <div class="brand"><span class="prompt">fatma@sec</span>:~$ ./knowledge-space<span class="cursor"></span></div>
+  <div class="topbar-right">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="search notes...">
+      <div id="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-heading">Explorer</p>
+    <div id="explorer"></div>
+  </aside>
+
+  <main>
+    <p class="eyebrow">whoami</p>
+    <h1>Fatma's Knowledge Space</h1>
+    <p class="lede">
+      A running archive of what I learn doing web penetration testing —
+      attack paths, methodology notes, box write-ups, and the tools
+      I actually reach for. Built so future-me stops re-learning the
+      same things every engagement.
+    </p>
+
+    <h2>Where everything is</h2>
+    <div class="cat-grid">
+      <a class="cat-card" href="cloud-security/index.html">
+        <span class="cat-icon">[ 01 ]</span>
+        <h4>cloud security/</h4>
+        <p>IAM misconfigs, storage exposure, attack paths in AWS/Azure/GCP.</p>
+      </a>
+      <a class="cat-card" href="web-security/index.html">
+        <span class="cat-icon">[ 02 ]</span>
+        <h4>web security/</h4>
+        <p>Vuln classes, methodology, and payloads for web app testing.</p>
+      </a>
+      <a class="cat-card" href="writeups/index.html">
+        <span class="cat-icon">[ 03 ]</span>
+        <h4>writeups/</h4>
+        <p>HTB / THM / CTF boxes and engagements, start to root.</p>
+      </a>
+      <a class="cat-card" href="resources-and-tools/index.html">
+        <span class="cat-icon">[ 04 ]</span>
+        <h4>resources and tools/</h4>
+        <p>The recon stack, Burp extensions, cheatsheets, wordlists.</p>
+      </a>
+      <a class="cat-card" href="active-directory/index.html">
+        <span class="cat-icon">[ 05 ]</span>
+        <h4>active directory/</h4>
+        <p>Kerberos abuse, lateral movement, BloodHound attack paths.</p>
+      </a>
+    </div>
+
+    <h2>Recent notes</h2>
+    <ul class="note-list">
+      <li><a href="active-directory/kerberoasting-explained.html">Kerberoasting Explained</a><span class="note-meta">active directory · updated July 2026</span></li>
+      <li><a href="web-security/idor-hunting-methodology.html">IDOR Hunting Methodology</a><span class="note-meta">web security · updated June 2026</span></li>
+      <li><a href="writeups/htb-forest.html">HTB — Forest</a><span class="note-meta">writeups · updated June 2026</span></li>
+      <li><a href="cloud-security/aws-iam-privilege-escalation.html">AWS IAM Privilege Escalation Paths</a><span class="note-meta">cloud security · updated May 2026</span></li>
+      <li><a href="resources-and-tools/recon-toolkit.html">Recon Toolkit</a><span class="note-meta">resources and tools · updated May 2026</span></li>
+    </ul>
+
+    <h2>About</h2>
+    <p>
+      This is <code>Fatma</code>, a web penetration tester documenting the
+      concepts, attack chains, and tooling that come up again and again
+      across engagements — so they're one search away instead of buried
+      in scattered notes.
+    </p>
+  </main>
+</div>
+
+<footer>Fatma's Knowledge Space © 2026 — built with plain HTML/CSS/JS, no build step required.</footer>
+
+<script src="site-data.js"></script>
+<script>
+  renderExplorer("", "");
+  renderSearch("");
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTB — Forest — Fatma's Knowledge Space</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<header class="topbar">
+  <a class="brand" href="../index.html" style="text-decoration:none;"><span class="prompt">fatma@sec</span>:~$ ./knowledge-space<span class="cursor"></span></a>
+  <div class="topbar-right">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="search notes...">
+      <div id="search-results"></div>
+    </div>
+    <a class="home-link" href="../index.html">~/home</a>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <p class="sidebar-heading">Explorer</p>
+    <div id="explorer"></div>
+  </aside>
+
+  <main>
+    <p class="breadcrumb"><a href="../index.html">home</a><span class="sep">/</span><a href="index.html">writeups</a><span class="sep">/</span><span class="current">HTB — Forest</span></p>
+    <p class="eyebrow">writeups</p>
+    <h1>HTB — Forest</h1>
+    <p class="lede">Windows / Active Directory box — anonymous LDAP bind to Domain Admin
+    via a classic AS-REP roasting + group-membership abuse chain.</p>
+
+    <span class="tag">windows</span><span class="tag">active directory</span><span class="tag">htb</span>
+
+    <h2>Recon</h2>
+    <pre><code>nmap -sC -sV -p- 10.10.10.161</code></pre>
+    <p>Standard DC fingerprint: 53/DNS, 88/Kerberos, 389/LDAP, 445/SMB — confirms this is a
+    domain controller for <code>htb.local</code>.</p>
+
+    <h2>Foothold — AS-REP Roasting</h2>
+    <p>LDAP allows anonymous bind, which is enough to enumerate usernames. One account,
+    <code>svc-alfresco</code>, has Kerberos pre-authentication disabled — meaning its AS-REP
+    hash can be requested with no credentials at all.</p>
+    <pre><code>impacket-GetNPUsers htb.local/ -usersfile users.txt -no-pass -dc-ip 10.10.10.161
+hashcat -m 18200 asrep.hash rockyou.txt</code></pre>
+    <p>The cracked password gives a shell as <code>svc-alfresco</code>.</p>
+
+    <h2>Privesc — group membership abuse</h2>
+    <p>Enumerating group membership with BloodHound shows <code>svc-alfresco</code> is a
+    member of <strong>Service Accounts → Privileged IT Accounts</strong>, which has
+    <code>GenericAll</code> over the <strong>Exchange Windows Permissions</strong> group. That
+    group in turn has <code>WriteDacl</code> on the domain object itself — enough to grant
+    <code>DCSync</code> rights to a controlled account.</p>
+    <pre><code>net rpc group addmem "Exchange Windows Permissions" svc-alfresco -U htb.local/svc-alfresco
+# grant DCSync rights via a DACL ACE, then:
+impacket-secretsdump htb.local/svc-alfresco:'password'@10.10.10.161</code></pre>
+    <p>DCSync dumps every domain hash including <code>Administrator</code> — full domain
+    compromise from there.</p>
+
+    <h2>Takeaways</h2>
+    <ul>
+      <li>Anonymous LDAP bind is a small misconfig with outsized impact — it's the entire
+      opening move here.</li>
+      <li>Nested group membership is where most real AD privilege chains hide; BloodHound's
+      shortest-path graph found this in seconds versus manually walking ACLs.</li>
+    </ul>
+
+  </main>
+</div>
+
+<footer>Fatma's Knowledge Space © 2026</footer>
+
+<script src="../site-data.js"></script>
+<script>
+  renderExplorer("../", "writeups/htb-forest.html");
+  renderSearch("../");
+</script>
+</body>
+</html>
